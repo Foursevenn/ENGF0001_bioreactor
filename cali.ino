@@ -11,7 +11,6 @@
 #include <string.h>
 #include <math.h>
 
-
 double stir_cali(void);
 void pulse(void);
 double heat_cali(void);
