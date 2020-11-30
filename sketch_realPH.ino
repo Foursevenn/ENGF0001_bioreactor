@@ -52,15 +52,18 @@ void setup() {
 void loop() {
   double setV=get_setvalue();
   double nowV=get_pH();
+  Serial.print(nowV);
   double error = get_difference(nowV,setV);
-  if (error>0.5){
+  if (true){
      Wire.beginTransmission(0x40);
-     Wire.write(0x07);
      Wire.write(0x06);
-     delay(5);
-     Wire.write(0x09);
+     Wire.write(0x99);
+     Wire.write(0x01);
+     Wire.write(0xCC);
+     Wire.write(0x04);
+     Wire.endTransmission();
   }
-  else if(error<-0.5){
+  /*else if(error<-0.5){
     Wire.beginTransmission(0x40);
     Wire.write(0x0B);
     Wire.write(0x0A);
@@ -73,7 +76,8 @@ void loop() {
   nowV = get_pH();
   Serial.print("output = ");
   Serial.print(nowV);
-  delay(50);
+  delay(50);*/
+  delay(5000);
 }
 
 
