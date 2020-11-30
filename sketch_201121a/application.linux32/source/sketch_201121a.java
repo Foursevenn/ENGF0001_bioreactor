@@ -1,5 +1,24 @@
-import controlP5.*;
-import processing.serial.*;
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import controlP5.*; 
+import processing.serial.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class sketch_201121a extends PApplet {
+
+
+
 ControlP5 cp5;
 Serial port;
 PFont font;
@@ -11,7 +30,7 @@ double heat;
 double stir;
 String s;
 PrintWriter output;
-void setup(){
+public void setup(){
   
   font = createFont("Georgia", 20);
   
@@ -24,28 +43,28 @@ void setup(){
                 .setPosition(100,80)
                 .setSize(300,200)
                 //.setBackgroundHeight(200)
-                .setBackgroundColor(color(#7E8FB9))
+                .setBackgroundColor(color(0xff7E8FB9))
                 ;
   
   Group g2 = cp5.addGroup("Speed")
                 .setPosition(500,80)
                 .setSize(300,200)
                 //.setBackgroundHeight(200)
-                .setBackgroundColor(color(#7E8FB9))
+                .setBackgroundColor(color(0xff7E8FB9))
                 ;
                 
   Group g3 = cp5.addGroup("pH")
                 .setPosition(100,360)
                 .setSize(300,200)
                 //.setBackgroundHeight(200)
-                .setBackgroundColor(color(#7E8FB9))
+                .setBackgroundColor(color(0xff7E8FB9))
                 ;
                 
   Group g4 = cp5.addGroup("control_panel")
                 .setPosition(500,360)
                 .setSize(300,200)
                 //.setBackgroundHeight(200)
-                .setBackgroundColor(color(#7E8FB9))
+                .setBackgroundColor(color(0xff7E8FB9))
                 ;
   
   cp5.addSlider("set_stir")
@@ -87,11 +106,11 @@ void setup(){
   //port = new Serial(this ,"/tmp/simavr-uart0",9600);
 }
 
-void settings(){
+public void settings(){
   size(900,620);
 }
 
-void draw(){
+public void draw(){
   
   background(200,200,200);
   
@@ -107,14 +126,14 @@ void draw(){
 println(s);
 }
 
-void deliver(){
+public void deliver(){
   stir = cp5.getController("set_stir").getValue();
   heat = cp5.getController("set_heat").getValue();
   pH = cp5.getController("set_pH").getValue();
   port.write("a"+stir+","+heat+","+pH+"\n");
 }
 
-void toggle(boolean theFlag){
+public void toggle(boolean theFlag){
   if(theFlag==true){
     println("aaaa");
   } else{
@@ -122,8 +141,17 @@ void toggle(boolean theFlag){
   }
 }
 
-void keyPressed() {
+public void keyPressed() {
   output.flush(); // Writes the remaining data to the file
   output.close(); // Finishes the file
   exit(); // Stops the program
+}
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "sketch_201121a" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
 }
