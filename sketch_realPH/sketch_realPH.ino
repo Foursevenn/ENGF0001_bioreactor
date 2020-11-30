@@ -71,11 +71,11 @@ void loop() {
   }
   else{
     delay(5);
-  }
+  }*/
   nowV = get_pH();
   Serial.print("output = ");
   Serial.print(nowV);
-  delay(50);*/
+  delay(50);
 }
 
 
