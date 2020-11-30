@@ -6,10 +6,11 @@
  This is a template sketch for the testboard simduino
   
  */
-
+#include <Adafruit_PWMServoDriver.h>
 #include <stdio.h>
 #include <string.h>
 #include <Wire.h>
+
 void pH(void);
 double get_pH(void);
 double get_setvalue(void);
@@ -44,7 +45,10 @@ void setup() {
   pinMode(pHPin,         INPUT);
   
   // More setup...
-  
+  Wire.beginTransmission(0x40);
+  Wire.write(0x00);
+  Wire.write(0x41);
+  Wire.endTransmission();
 }
 
 
@@ -56,10 +60,10 @@ void loop() {
   if (true){
      Wire.beginTransmission(0x40);
      Wire.write(0x06);
-     Wire.write(0x99);
-     Wire.write(0x01);
-     Wire.write(0xCC);
-     Wire.write(0x04);
+     Wire.write(0x05);
+     Wire.write(0x00);
+     Wire.write(0x0A);
+     Wire.write(0x00);
      Wire.endTransmission();
   }
   /*else if(error<-0.5){
@@ -94,7 +98,7 @@ double get_setvalue(void){
 
 double get_pH(){
   pHnow = analogRead(pHPin);
-  pHnow = pHnow/500.0*7;
+  pHnow = pHnow/500.0*7.0;
   return pHnow;
 }
 
