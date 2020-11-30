@@ -6,7 +6,7 @@
  This is a template sketch for the testboard simduino
   
  */
-#include <Adafruit_PWMServoDriver.h>
+//#include <Adafruit_PWMServoDriver.h>
 #include <stdio.h>
 #include <string.h>
 #include <Wire.h>
@@ -47,7 +47,7 @@ void setup() {
   // More setup...
   Wire.beginTransmission(0x40);
   Wire.write(0x00);
-  Wire.write(0x41);
+  Wire.write(0x21);
   Wire.endTransmission();
 }
 
@@ -57,7 +57,7 @@ void loop() {
   double setV=get_setvalue();
   double nowV=get_pH();
   double error = get_difference(nowV,setV);
-  if (true){
+  if (error>0.5){
      Wire.beginTransmission(0x40);
      Wire.write(0x06);
      Wire.write(0x05);
@@ -66,7 +66,7 @@ void loop() {
      Wire.write(0x00);
      Wire.endTransmission();
   }
-  /*else if(error<-0.5){
+  else if(error<-0.5){
     Wire.beginTransmission(0x40);
     Wire.write(0x0B);
     Wire.write(0x0A);
@@ -75,7 +75,7 @@ void loop() {
   }
   else{
     delay(5);
-  }*/
+  }
   nowV = get_pH();
   Serial.print("output = ");
   Serial.print(nowV);
