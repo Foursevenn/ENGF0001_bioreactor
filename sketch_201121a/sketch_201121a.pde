@@ -9,7 +9,8 @@ double set_stir;
 double pH;
 double heat;
 double stir;
-String s;
+String s = "";
+String s0 = "";
 PrintWriter output;
 void setup(){
   
@@ -101,10 +102,19 @@ void draw(){
   text("Bioreactor Team 50 V.1",340, 50);
   //output.println( + "t" + );
   
-  if(port.available()>0){ 
+  if(port.available()>0 ){
+    s0 = s;
     s = port.readStringUntil('\n');
   }
-println(s);
+  
+  if (cp5.getController("set_heat").isUpdate()){
+    Float setHeat = cp5.getController("set_heat").getValue();
+    port.write("GUI");
+    //println(cp5.getController("set_heat").getValue());
+  }
+  if(s0 != s){
+    println(s);
+  }
 }
 
 void deliver(){
