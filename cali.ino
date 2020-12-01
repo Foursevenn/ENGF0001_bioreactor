@@ -1,15 +1,9 @@
-/*
- sketch.ino
 
- Stephen Hailes, Oct 2020
-
- This is a template sketch for the testboard simduino
-  
- */
 
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <Wire.h>
 
 double stir_cali(void);
 void pulse(void);
@@ -51,6 +45,10 @@ void setup() {
   pinMode(thermistorPin, INPUT);
   pinMode(pHPin,         INPUT);
   attachInterrupt(digitalPinToInterrupt(lightgatePin),pulse,FALLING);
+  Wire.beginTransmission(0x40);
+  Wire.write(0x00);
+  Wire.write(0x21);
+  Wire.endTransmission();
   // More setup...
   
 }
@@ -61,6 +59,13 @@ void loop() {
   count += 1;
   analogWrite(stirrerPin,count*5);
   if(count == 1){analogWrite(heaterPin,200);}
+  Wire.beginTransmission(0x40);
+  Wire.write(0x06);
+  Wire.write(0x01);
+  Wire.write(0x00);
+  Wire.write(0xFF);
+  Wire.write(0xEF);
+  Wire.endTransmission();
   //analogWrite(stirrerPin,100);
   if(last_time !=0){
     t = heat_cali();
