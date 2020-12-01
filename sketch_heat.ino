@@ -28,7 +28,7 @@ const byte pHPin         = A1;
 // The PCA9685 is connected to the default I2C connections. There is no need
 // to set these explicitly.
 
-double settemp = 305;
+double settemp = 302;
 double heat_error = 0;
 
 const double total_vol = 5.0;
@@ -46,14 +46,12 @@ void setup() {
   pinMode(heaterPin,     OUTPUT);
   pinMode(thermistorPin, INPUT);
   pinMode(pHPin,         INPUT);
-  attachInterrupt(digitalPinToInterrupt(lightgatePin),pulse,FALLING);
-
+ 
 }
 
  
 void loop() {
   heat();
-  delay(5000);
 }
 
 //------------------------------------------------------------------------------
@@ -61,10 +59,15 @@ void loop() {
 void heat(){
   double temp = get_temp();
   heat_error = get_difference(temp,settemp);
-  if (heat_error > 0){
-    analogWrite(heaterPin, 255);
-  }
-  if (heat_error <= 0){
+  if (heat_error > 5.0){
+    analogWrite(heaterPin, 200);
+  } else if (heat_error > 3.0){
+    analogWrite(heaterPin, 150);
+  } else if (heat_error > 1.0){
+    analogWrite(heaterPin, 125);
+  } else if (heat_error > 0.5){
+    analogWrite(heaterPin, 60);
+  } else{
     analogWrite(heaterPin, 0);
   }
 }
@@ -82,9 +85,6 @@ double get_temp(){
   double vol = (analog_vol/1023)*total_vol;
   double R = vol*internal_R/(total_vol-vol);
   double temp = (B*t)/(B+(log(R/R_25)*t));
-  Serial.print("temperature--> ");
-  Serial.print(temp);
-  Serial.print("   ");
   return temp;
 }
  

@@ -12,16 +12,9 @@
 
 void heat(void);
 void stir(void);
-void pH(void);
 double get_difference(double value,double setvalue);
-double get_heat_pid(void);
-double get_stir_pid(void);
 double get_temp(void);
 double get_speed(void);
-double get_pH(void);
-double get_settemp(void);
-double get_setspeed(void);
-double get_setpH(void);
 double get_output(double setspeed);
 
 // These define which pins are connected to what device on the virtual bioreactor
@@ -35,10 +28,10 @@ const byte pHPin         = A1;
 // The PCA9685 is connected to the default I2C connections. There is no need
 // to set these explicitly.
 
-double settemp;
+double settemp = 303.5;
 double heat_error = 0;
 
-double setspeed;
+double setspeed = 1000;
 double stir_error = 0;
 
 double setpH = 5.0;
@@ -51,8 +44,7 @@ const double internal_R = 10000.0;
 const double B = 4220.0;
 const double R_25 = 10000.0;
 const double t = 25.0+273.15;
-int count = 0;
-double pHnow = 0;
+double pHnow = 0; 
 
 void setup() {
   Serial.begin(9600);
@@ -64,16 +56,12 @@ void setup() {
   pinMode(pHPin,         INPUT);
   attachInterrupt(digitalPinToInterrupt(lightgatePin),pulse,FALLING);
 
-  settemp = get_settemp();
-  setspeed = get_setspeed();
 }
 
  
 void loop() {
   heat();
   stir();
-  ph();
-  delay(5000);
 }
 
 //------------------------------------------------------------------------------
@@ -81,11 +69,16 @@ void loop() {
 void heat(){
   double temp = get_temp();
   heat_error = get_difference(temp,settemp);
-  if (heat_error > 0){
-    digitalWrite(heaterPin, HIGH);
-  }
-  if (heat_error <= 0){
-    digitalWrite(heaterPin, LOW);
+  if (heat_error > 5.0){
+    analogWrite(heaterPin, 200);
+  } else if (heat_error > 3.0){
+    analogWrite(heaterPin, 150);
+  } else if (heat_error > 1.0){
+    analogWrite(heaterPin, 125);
+  } else if (heat_error > 0.5){
+    analogWrite(heaterPin, 60);
+  } else{
+    analogWrite(heaterPin, 0);
   }
 }
 
@@ -95,32 +88,6 @@ void stir(){
   if (stir_error) != 0){
     get_output(setspeed);
   }
-}
-
-void pH(){
-  double nowV=get_pH();
-  double error = get_difference(nowV,setpH);
-  if (error<-0.5){
-     Wire.beginTransmission(0x40);
-     Wire.write(0x07);
-     Wire.write(0x06);
-     delay(5);
-     Wire.write(0x09);
-  }
-  else if(error>0.5){
-    Wire.beginTransmission(0x40);
-    Wire.write(0x0B);
-    Wire.write(0x0A);
-    delay(5);
-    Wire.write(0x0D);
-  }
-  else{
-    delay(5);
-  }
-  nowV = get_pH();
-  Serial.print("output = ");
-  Serial.print(nowV);
-  delay(50);
 }
 
 //------------------------------------------------------------------------------
@@ -135,10 +102,7 @@ double get_temp(){
   double analog_vol = analogRead(thermistorPin);
   double vol = (analog_vol/1023)*total_vol;
   double R = vol*internal_R/(total_vol-vol);
-  double temp = (B*t)/(B-(log(R/R_25)*t)) + 273.15;
-  Serial.print("temperature--> ");
-  Serial.print(temp);
-  Serial.print("   ");
+  double temp = (B*t)/(B+(log(R/R_25)*t));
   return temp;
 }
 
@@ -155,31 +119,6 @@ void pulse(){
   //pulseDetected = 1;
   last_time = time;
   time = millis();
-}
-
-double get_pH(){
-  pHnow = analogRead(pHPin);
-  pHnow = pHnow/500.0*7;
-  Serial.print("pH--> ");
-  Serial.print(pH);
-  Serial.println("   ");
-  return pHnow;
-}
-
-//------------------------------------------------------------------------------
-
-double get_settemp(){
-  double settemp;
-  printf("Please enter the teemperature for the system: ");
-  scanf("%lf",&settemp);
-  return settemp;
-}
-
-double get_setspeed(){
-  double setspeed;
-  printf("Please enter the speed for stirrer: ");
-  scanf("%lf",&setspeed);
-  return setspeed;
 }
 
 //------------------------------------------------------------------------------
