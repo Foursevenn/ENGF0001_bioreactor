@@ -1,3 +1,8 @@
+
+
+
+  
+  
 /*
  sketch.ino
 
@@ -10,6 +15,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "Adafruit_PWMServoDriver.cpp"
+
 
 double stir_cali(void);
 void pulse(void);
@@ -35,6 +42,7 @@ const double B = 4220.0;
 const double R_25 = 10000.0;
 const double t = 25.0+273.15;
 int count = 0;
+String gui_read;
 
 //volatile byte pulseDetected = 0;
 
@@ -60,6 +68,10 @@ void loop() {
   double s,t,pH;
   count += 1;
   analogWrite(stirrerPin,count*5);
+  analogWrite(stirrerPin,count*5);
+  Adafruit_PWMServoDriver begin(0x40);
+  Adafruit_PWMServoDriver setPWMFreq(500);
+  Wire.endTransmission();
   if(count == 1){analogWrite(heaterPin,200);}
   //analogWrite(stirrerPin,100);
   if(last_time !=0){
@@ -76,6 +88,11 @@ void loop() {
     Serial.print(pH);
     Serial.println("   ");
   }
+  if (Serial.available())
+  {
+	  gui_read = Serial.read();
+  }
+  printf("%s",gui_read);
   delay(30000);
 }
 
@@ -103,9 +120,6 @@ double pH_cali(){
   double pH = analogRead(pHPin)/500.0 * 7.0;
   return pH;
 }
-
-  
-  
 
 
  
