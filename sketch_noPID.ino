@@ -175,6 +175,6 @@ void pulse(){
 //------------------------------------------------------------------------------
 
 double get_output(){
-  int val = map(setspeed, 500, 1500, 0, 255);
+  int val = map(setspeed, 500, 1500, 41.5, 122.5);
   analogWrite(stirrerPin, val);
 }
