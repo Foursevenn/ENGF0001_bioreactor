@@ -38,7 +38,7 @@ double setspeed = 1000;
 double stir_error = 0.0;
 double frequency = 0.0;
 
-double setpH = 5.0;
+double setpH = 5.55;
 double pH_error = 0.0;
 double pHnow = 0.0;
 
@@ -104,7 +104,7 @@ void pH(){
   double setV = setpH;
   double nowV = get_pH();
   pH_error = get_difference(nowV,setV);
-  if (pH_error<-0.5){
+  if (pH_error<-0.2){
      Wire.beginTransmission(0x40);
      Wire.write(0x06);
      Wire.write(0x01);
@@ -113,7 +113,7 @@ void pH(){
      Wire.write(0x0F);
      Wire.endTransmission();
   }
-  else if(pH_error>0.5){
+  else if(pH_error>0.2){
      Wire.beginTransmission(0x40);
      Wire.write(0x0A);
      Wire.write(0x01);
