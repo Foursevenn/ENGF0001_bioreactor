@@ -9,13 +9,16 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <Wire.h>
 
 void heat(void);
 void stir(void);
+void pH(void);
 double get_difference(double value,double setvalue);
 double get_temp(void);
 double get_speed(void);
-double get_output(double setspeed);
+double get_pH(void);
+double get_output(void);
 
 // These define which pins are connected to what device on the virtual bioreactor
 //
@@ -29,22 +32,23 @@ const byte pHPin         = A1;
 // to set these explicitly.
 
 double settemp = 303.5;
-double heat_error = 0;
+double heat_error = 0.0;
 
 double setspeed = 1000;
-double stir_error = 0;
+double stir_error = 0.0;
+double frequency = 0.0;
 
 double setpH = 5.0;
+double pH_error = 0.0;
+double pHnow = 0.0;
 
 double last_time = 0;
 double time = 0;
-double frequency = 0.0;
 const double total_vol = 5.0;
 const double internal_R = 10000.0;
 const double B = 4220.0;
 const double R_25 = 10000.0;
 const double t = 25.0+273.15;
-double pHnow = 0; 
 
 void setup() {
   Serial.begin(9600);
@@ -55,6 +59,10 @@ void setup() {
   pinMode(thermistorPin, INPUT);
   pinMode(pHPin,         INPUT);
   attachInterrupt(digitalPinToInterrupt(lightgatePin),pulse,FALLING);
+  Wire.beginTransmission(0x40);
+  Wire.write(0x00);
+  Wire.write(0x21);
+  Wire.endTransmission();
 
 }
 
@@ -62,6 +70,8 @@ void setup() {
 void loop() {
   heat();
   stir();
+  pH();
+  delay(5000);
 }
 
 //------------------------------------------------------------------------------
@@ -85,9 +95,41 @@ void heat(){
 void stir(){
   double speed = get_speed();
   stir_error = get_difference(speed,setspeed);
-  if (stir_error) != 0){
-    get_output(setspeed);
+  if (stir_error != 0){
+    get_output();
   }
+}
+
+void pH(){
+  double setV = setpH;
+  double nowV = get_pH();
+  pH_error = get_difference(nowV,setV);
+  if (pH_error<-0.5){
+     Wire.beginTransmission(0x40);
+     Wire.write(0x06);
+     Wire.write(0x01);
+     Wire.write(0x00);
+     Wire.write(0xFF);
+     Wire.write(0x0F);
+     Wire.endTransmission();
+  }
+  else if(pH_error>0.5){
+     Wire.beginTransmission(0x40);
+     Wire.write(0x0A);
+     Wire.write(0x01);
+     Wire.write(0x00);
+     Wire.write(0xFF);
+     Wire.write(0x0F);
+     Wire.endTransmission();
+  }
+  else{
+    delay(5);
+  }
+  nowV = get_pH();
+  Serial.print("pH--> ");
+  Serial.print(nowV);
+  Serial.print("   ");
+  delay(50);
 }
 
 //------------------------------------------------------------------------------
@@ -103,6 +145,9 @@ double get_temp(){
   double vol = (analog_vol/1023)*total_vol;
   double R = vol*internal_R/(total_vol-vol);
   double temp = (B*t)/(B+(log(R/R_25)*t));
+  Serial.print("temperature--> ");
+  Serial.print(temp);
+  Serial.print("   ");
   return temp;
 }
 
@@ -115,6 +160,12 @@ double get_speed(){
   return frequency; 
 }
 
+double get_pH(){
+  pHnow = analogRead(pHPin);
+  pHnow = pHnow/500.0*7.0;
+  return pHnow;
+}
+
 void pulse(){
   //pulseDetected = 1;
   last_time = time;
@@ -123,9 +174,7 @@ void pulse(){
 
 //------------------------------------------------------------------------------
 
-double get_output(double setspeed){
+double get_output(){
   int val = map(setspeed, 500, 1500, 0, 255);
   analogWrite(stirrerPin, val);
-  Serial.print("output = ");
-  Serial.print(val);
 }
