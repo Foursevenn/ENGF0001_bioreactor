@@ -10,6 +10,10 @@ void pulse(void);
 double heat_cali(void);
 double pH_cali(void);
 void output_data(void);
+double filter();
+double filter_buf_t[FILTER_N];
+double filter_buf_s[FILTER_N];
+double filter_buf_pH[FILTER_N];
 
 // These define which pins are connected to what device on the virtual bioreactor
 //
@@ -28,7 +32,8 @@ const double internal_R = 10000.0;
 const double B = 4220.0;
 const double R_25 = 10000.0;
 const double t = 25.0+273.15;
-int count = 0;
+int count = 1;
+#define FILTER_N 10
 
 //volatile byte pulseDetected = 0;
 
@@ -56,9 +61,10 @@ void setup() {
  
 void loop() {
   double s,t,pH;
-  count += 1;
-  analogWrite(stirrerPin,count*5);
+  int i;
+  double filtered_t,filtered_s,filtered_pH;
   if(count == 1){analogWrite(heaterPin,200);}
+  analogWrite(stirrerPin,count*0.5);
   Wire.beginTransmission(0x40);
   Wire.write(0x06);
   Wire.write(0x01);
@@ -66,22 +72,59 @@ void loop() {
   Wire.write(0xFF);
   Wire.write(0xEF);
   Wire.endTransmission();
+  t = heat_cali();
+  s = stir_cali();
+  pH = pH_cali();
+  filter_buf_t[count] = t; 
+  filter_buf_s[count] = s; 
+  filter_buf_pH[count] = pH; 
+  count += 1;
+  if(last_time !=0 && count %FILTER_N == 0){
   //analogWrite(stirrerPin,100);
-  if(last_time !=0){
-    t = heat_cali();
+    filtered_t= filter(filter_buf_t);
+    filtered_s= filter(filter_buf_s);
+    filtered_pH= filter(filter_buf_pH);
     Serial.print("temperature--> ");
-    Serial.print(t);
+    Serial.print(filtered_t);
     Serial.print("   ");
-    s = stir_cali();
     Serial.print("motor speed--> ");
-    Serial.print(s);
+    Serial.print(filtered_s);
     Serial.print("   ");
-    pH = pH_cali();
     Serial.print("pH--> ");
-    Serial.print(pH);
+    Serial.print(filtered_pH);
     Serial.println("   ");
+    clear_buf(filtered_t); 
+    clear_buf(filtered_s); 
+    clear_buf(filtered_pH); 
+    count = 0;
   }
-  delay(30000);
+  delay(3000);
+}
+
+double clear_buf(double buf){
+  int i;
+  for(i = 0;i<FILTER_N;i++){
+    a[i] = 0.0;
+  }
+}
+
+double filter(double buf){
+  int i,j;
+  double filter1, filter_sum = 0;
+  for (j = 0; j < FILTER_N; j++){
+    for (i = 0; i < FILTER_N - j; i++){
+      if(buf[i]> buf[i+1]){
+
+      filter1 = buf[i];
+      buf[i] = nuf[i+1];
+      buf[i+1] = filter1;
+      }
+    }
+  }
+  for(i = 1; i < FILTER_N-1;i++){
+    filter_sum += buf[i];
+  }
+  return filter_sum / (FILTER_N-2);
 }
 
 double stir_cali(){
