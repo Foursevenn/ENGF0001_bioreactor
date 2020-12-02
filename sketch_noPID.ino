@@ -19,6 +19,8 @@ double get_temp(void);
 double get_speed(void);
 double get_pH(void);
 double get_output(void);
+double filter(double);
+void clear_buf(double buf[]);
 
 // These define which pins are connected to what device on the virtual bioreactor
 //
@@ -50,6 +52,13 @@ const double B = 4220.0;
 const double R_25 = 10000.0;
 const double t = 25.0+273.15;
 
+#define FILTER_N 10
+double filter();
+double filter_buf_t[FILTER_N];
+double filter_buf_s[FILTER_N];
+double filter_buf_pH[FILTER_N];
+int count = 1;
+
 void setup() {
   Serial.begin(9600);
 
@@ -71,13 +80,42 @@ void loop() {
   heat();
   stir();
   pH();
+  count+=1;
+  if(count == 10) {count = 0;}
   delay(5000);
 }
 
 //------------------------------------------------------------------------------
+double filter(double buf[]){
+  int i,j;
+  double filter1, filter_sum = 0;
+  for (j = 0; j < FILTER_N; j++){
+    for (i = 0; i < FILTER_N - j; i++){
+      if(buf[i]> buf[i+1]){
+
+      filter1 = buf[i];
+      buf[i] = buf[i+1];
+      buf[i+1] = filter1;
+      }
+    }
+  }
+  for(i = 1; i < FILTER_N-1;i++){
+    filter_sum += buf[i];
+  }
+  return filter_sum / (FILTER_N-2);
+}
+
+void clear_buf(double buf[]){
+  int i;
+  for(i = 0;i<FILTER_N;i++){
+    buf[i] = 0.0;
+  }
+}
 
 void heat(){
+  double filtered_t;
   double temp = get_temp();
+  filter_buf_t[count] = t; 
   heat_error = get_difference(temp,settemp);
   if (heat_error > 5.0){
     analogWrite(heaterPin, 200);
@@ -90,20 +128,40 @@ void heat(){
   } else{
     analogWrite(heaterPin, 0);
   }
+  if(count == 9){
+  //analogWrite(stirrerPin,100);
+    filtered_t= filter(filter_buf_t);
+    Serial.print("temperature--> ");
+    Serial.print(filtered_t);
+    Serial.print("   ");
+    clear_buf(filter_buf_t); 
+  }
 }
 
 void stir(){
+  double filtered_s;
   double speed = get_speed();
+  filter_buf_s[count] = speed; 
   stir_error = get_difference(speed,setspeed);
   if (stir_error != 0){
     get_output();
   }
+  if(count == 9){
+  //analogWrite(stirrerPin,100);
+    filtered_s= filter(filter_buf_s);
+    Serial.print("motor speed--> ");
+    Serial.print(filtered_s);
+    Serial.print("   ");
+    clear_buf(filter_buf_s); 
+  }
 }
 
 void pH(){
-  double setV = setpH;
-  double nowV = get_pH();
-  pH_error = get_difference(nowV,setV);
+  double filtered_pH;
+  // double setV = setpH;
+  double nowpH = get_pH();
+  filter_buf_pH[count] = nowpH;
+  pH_error = get_difference(nowpH,setpH);
   if (pH_error<-0.2){
      Wire.beginTransmission(0x40);
      Wire.write(0x06);
@@ -122,14 +180,22 @@ void pH(){
      Wire.write(0x0F);
      Wire.endTransmission();
   }
-  else{
-    delay(5);
+  if(count == 9){
+  //analogWrite(stirrerPin,100);
+    filtered_pH= filter(filter_buf_pH);
+    Serial.print("pH--> ");
+    Serial.print(filtered_pH);
+    Serial.println("   ");
+    clear_buf(filter_buf_pH); 
   }
-  nowV = get_pH();
-  Serial.print("pH--> ");
-  Serial.print(nowV);
-  Serial.print("   ");
-  delay(50);
+  // else{
+  //   delay(5);
+  // }
+  // nowV = get_pH();
+  // Serial.print("pH--> ");
+  // Serial.print(nowV);
+  // Serial.print("   ");
+  // delay(50);
 }
 
 //------------------------------------------------------------------------------
@@ -145,18 +211,18 @@ double get_temp(){
   double vol = (analog_vol/1023)*total_vol;
   double R = vol*internal_R/(total_vol-vol);
   double temp = (B*t)/(B+(log(R/R_25)*t));
-  Serial.print("temperature--> ");
-  Serial.print(temp);
-  Serial.print("   ");
+  // Serial.print("temperature--> ");
+  // Serial.print(temp);
+  // Serial.print("   ");
   return temp;
 }
 
 double get_speed(){
   frequency = 0.5 / ((time - last_time)/60000);
   //pulseDetected = 0;
-  Serial.print("motor speed--> ");
-  Serial.print(frequency);
-  Serial.print("   ");
+  // Serial.print("motor speed--> ");
+  // Serial.print(frequency);
+  // Serial.print("   ");
   return frequency; 
 }
 
