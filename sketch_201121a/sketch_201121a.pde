@@ -21,37 +21,31 @@ void setup(){
   output = createWriter("log.txt");
   
   Group g1 = cp5.addGroup("Temperature")
-                .setPosition(100,80)
-                .setSize(300,200)
+                .setPosition(50,80)
+                .setSize(375,200)
                 //.setBackgroundHeight(200)
-                .setBackgroundColor(color(#7E8FB9))
+                .setBackgroundColor(color(#F57D2F))
                 ;
   
   Group g2 = cp5.addGroup("Speed")
-                .setPosition(500,80)
-                .setSize(300,200)
+                .setPosition(475,80)
+                .setSize(375,200)
                 //.setBackgroundHeight(200)
-                .setBackgroundColor(color(#7E8FB9))
+                .setBackgroundColor(color(#1BDEEE))
                 ;
                 
   Group g3 = cp5.addGroup("pH")
-                .setPosition(100,360)
-                .setSize(300,200)
+                .setPosition(50,360)
+                .setSize(375,200)
                 //.setBackgroundHeight(200)
-                .setBackgroundColor(color(#7E8FB9))
+                .setBackgroundColor(color(#700ADD))
                 ;
                 
-  Group g4 = cp5.addGroup("control_panel")
-                .setPosition(500,360)
-                .setSize(300,200)
-                //.setBackgroundHeight(200)
-                .setBackgroundColor(color(#7E8FB9))
-                ;
   
   cp5.addSlider("set_stir")
     .setLabel("Set rpm")
     .setPosition(20,160)
-    .setSize(180,20)
+    .setSize(200,20)
     .setRange(0,1500)
     .setValue(800)
     .setFont(font)
@@ -60,16 +54,16 @@ void setup(){
   cp5.addSlider("set_heat")
     .setLabel("Set °C")
     .setPosition(20,160)
-    .setSize(180,20)
+    .setSize(200,20)
     .setRange(10,50)
     .setValue(30)
     .setFont(font)
     .setGroup(g1)
     ;
   cp5.addSlider("set_pH")
-    .setLabel("Set mg/L")
+    .setLabel("Set pH")
     .setPosition(20,160)
-    .setSize(180,20)
+    .setSize(200,20)
     .setRange(1,14)
     .setValue(5)
     .setFont(font)
@@ -77,11 +71,10 @@ void setup(){
     ;
   cp5.addToggle("toggle")
      .setLabel("Master Switch")
-     .setPosition(20,20)
-     .setSize(50,20)
+     .setPosition(525,410)
+     .setSize(275,100)
      .setValue(false)
      .setMode(ControlP5.SWITCH)
-     .setGroup(g4)
      ;
    
   //port = new Serial(this ,"/tmp/simavr-uart0",9600);
@@ -93,12 +86,12 @@ void settings(){
 
 void draw(){
   
-  background(200,200,200);
+  background(255,255,255);
   
-  fill(0,0,255);
+  fill(150,0,255);
   textFont(font);
-  
-  text("Bioreactor Team 50 V.1",340, 50);
+  text("Master Switch", 595, 380);
+  text("Bioreactor Team 50 V.3",340, 50);
   //output.println( + "t" + );
   
   /*if(port.available()>0){ 
