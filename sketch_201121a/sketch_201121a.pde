@@ -17,7 +17,9 @@ void setup(){
   
   cp5 = new ControlP5(this);
   printArray(Serial.list()); //?
-  //port = new Serial(this,"COM3", 9600);   //dont undocument it when no serial connection with the sketch
+  port = new Serial(this, Serial.list()[1], 9600);
+// don’t generate a serialEvent() unless you get a newline character:
+  port.bufferUntil('\n');
   output = createWriter("log.txt");
   
   Group g1 = cp5.addGroup("Temperature")
@@ -94,9 +96,9 @@ void draw(){
   text("Bioreactor Team 50 V.3",340, 50);
   //output.println( + "t" + );
   
-  /*if(port.available()>0){ 
+  if(port.available()>0){ 
     s = port.readStringUntil('\n');
-  }*/
+  }
 println(s);
 }
 
@@ -119,4 +121,14 @@ void keyPressed() {
   output.flush(); // Writes the remaining data to the file
   output.close(); // Finishes the file
   exit(); // Stops the program
+}
+
+void serialEvent (Serial myPort) {
+  // get the ASCII string:
+  String inString = myPort.readStringUntil('\n');
+  if (inString != null) {
+    // trim off any whitespace:
+    inString = trim(inString);
+    println("original val.: ", inString);
+  }
 }
