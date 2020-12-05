@@ -33,7 +33,7 @@ const byte pHPin         = A1;
 // The PCA9685 is connected to the default I2C connections. There is no need
 // to set these explicitly.
 
-double settemp = 299.0-1.5;
+double settemp = 299.00-1.5;
 double heat_error = 0.0;
 
 double setspeed = 1000;
