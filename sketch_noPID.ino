@@ -82,7 +82,7 @@ void loop() {
   pH();
   count+=1;
   if(count == 10) {count = 0;}
-  delay(5000);
+  delay(3000);
 }
 
 //------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ void clear_buf(double buf[]){
 void heat(){
   double filtered_t;
   double temp = get_temp();
-  filter_buf_t[count] = t; 
+  filter_buf_t[count] = temp; 
   heat_error = get_difference(temp,settemp);
   if (heat_error > 5.0){
     analogWrite(heaterPin, 200);
