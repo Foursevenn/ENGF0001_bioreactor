@@ -228,7 +228,7 @@ double get_speed(){
 
 double get_pH(){
   pHnow = analogRead(pHPin);
-  pHnow = pHnow/500.0*7.0;
+  pHnow = (pHnow-(300.0 - 200.0/3.0*4.0))/(200.0/3.0);
   return pHnow;
 }
 
