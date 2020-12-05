@@ -78,7 +78,33 @@ void setup(){
      .setValue(false)
      .setMode(ControlP5.SWITCH)
      ;
-   
+  cp5.addChart("Temperature to time")
+     .setPosition(20, 20)
+     .setSize(200, 100)
+     .setRange(20, 40)
+     .setView(Chart.LINE) // use Chart.LINE, Chart.PIE, Chart.AREA, Chart.BAR_CENTERED
+     .setStrokeWeight(1.5)
+     .setColorCaptionLabel(color(40))
+     .setGroup(g1)
+     ;
+  cp5.addChart("RPM to time")
+     .setPosition(20, 20)
+     .setSize(200, 100)
+     .setRange(500, 1500)
+     .setView(Chart.LINE) // use Chart.LINE, Chart.PIE, Chart.AREA, Chart.BAR_CENTERED
+     .setStrokeWeight(1.5)
+     .setColorCaptionLabel(color(40))
+     .setGroup(g2)
+     ;
+  cp5.addChart("pH Value to time")
+     .setPosition(20, 20)
+     .setSize(200, 100)
+     .setRange(1, 14)
+     .setView(Chart.LINE) // use Chart.LINE, Chart.PIE, Chart.AREA, Chart.BAR_CENTERED
+     .setStrokeWeight(1.5)
+     .setColorCaptionLabel(color(40))
+     .setGroup(g3)
+     ;
   //port = new Serial(this ,"/tmp/simavr-uart0",9600);
 }
 
