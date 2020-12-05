@@ -33,14 +33,14 @@ const byte pHPin         = A1;
 // The PCA9685 is connected to the default I2C connections. There is no need
 // to set these explicitly.
 
-double settemp = 303.5;
+double settemp = 299.0-1.5;
 double heat_error = 0.0;
 
 double setspeed = 1000;
 double stir_error = 0.0;
 double frequency = 0.0;
 
-double setpH = 5.55;
+double setpH = 5.0;
 double pH_error = 0.0;
 double pHnow = 0.0;
 
@@ -82,7 +82,7 @@ void loop() {
   pH();
   count+=1;
   if(count == 10) {count = 0;}
-  delay(5000);
+  //delay(5000);
 }
 
 //------------------------------------------------------------------------------
@@ -124,7 +124,9 @@ void heat(){
   } else if (heat_error > 1.0){
     analogWrite(heaterPin, 125);
   } else if (heat_error > 0.5){
-    analogWrite(heaterPin, 60);
+    analogWrite(heaterPin, 70);
+  } else if (heat_error > 0.3){
+    analogWrite(heaterPin, 30);
   } else{
     analogWrite(heaterPin, 0);
   }
