@@ -128,6 +128,17 @@ void draw(){
   text("Bioreactor Team 50 V.3",340, 50);
   //output.println( + "t" + );
   
+  //output setvalues to simavr
+  // if {
+  //   myPort.write("H"+heat);
+  // }
+  // if {
+  //   myPort.write("S"+stir);
+  // }
+  // if {
+  //   myPort.write("P"+pH);
+  // }
+
   if(myport.available()>0){ 
     s = myport.readStringUntil('\n');
     s = trim(s);
