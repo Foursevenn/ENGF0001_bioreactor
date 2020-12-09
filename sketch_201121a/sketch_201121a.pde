@@ -14,7 +14,7 @@ String heat_now;
 String stir_now;
 //String[] sensors;
 //sensors = new String[3];
-String[] sensors=new String[3];
+
 String s;
 PrintWriter output;
 void setup(){
@@ -22,7 +22,7 @@ void setup(){
   font = createFont("Georgia", 20);
   
   cp5 = new ControlP5(this);
-  printArray(Serial.list()); //?
+  //printArray(Serial.list()); //?
   myport = new Serial(this,"/tmp/simavr-uart0", 9600);
 // don’t generate a serialEvent() unless you get a newline character:
   myport.bufferUntil('\n');
@@ -142,43 +142,42 @@ void draw(){
   text("Bioreactor Team 50 V.3",340, 50);
   //output.println( + "t" + );
   
-  //output setvalues to simavr
-  // if {
-  //   myPort.write("H"+heat);
-  // }
-  // if {
-  //   myPort.write("S"+stir);
-  // }
-  // if {
-  //   myPort.write("P"+pH);
-  // }
-
+  stir = cp5.getController("set_stir").getValue();
+  heat = cp5.getController("set_heat").getValue();
+  pH = cp5.getController("set_pH").getValue();
+  myport.write(heat+","+stir+","+pH);
+  //println(heat+","+stir+","+pH);
+  
   if(myport.available()>0){ 
+    String[] sensors=new String[3];
     s = myport.readStringUntil('\n');
-    s = trim(s);
-    sensors[0] = split(s,",")[0];
-    sensors[1] = split(s,",")[1];
-    sensors[2] = split(s,",")[2];
+    if (s != null){
+        s = trim(s);
+        sensors[0] = split(s,",")[0];
+        sensors[1] = split(s,",")[1];
+        sensors[2] = split(s,",")[2];
+        //sensors = split(s,",");
+        //for (int n =0; n<3; n++){
+            //double sensors[n] = Double.parseDouble(sensor[n]);
+        //}
+        heat_now = sensors[0];
+        stir_now = sensors[1];
+        pH_now = sensors[2];
+        print("temperature--> " + sensors[0] + "\t");
+        print("motor speed--> " + sensors[1] + "\t");
+        println("pH--> " + sensors[2] );
+        if (heat_now != null){
+            Textlabel pHValue = ((Textlabel)cp5.getController("pHValue"));
+            Textlabel heatValue = ((Textlabel)cp5.getController("heatValue"));
+            Textlabel stirValue = ((Textlabel)cp5.getController("stirValue"));
+            pHValue.setValue(pH_now);
+            heatValue.setValue(heat_now);
+            stirValue.setValue(stir_now);
+      }
+    }
     //for (int n =0; n<3; n++){
-        //double sensors[n] = Double.parseDouble(sensor[n]);
+    //    sensors[n] = null;
     //}
-    heat_now = sensors[0];
-    stir_now = sensors[1];
-    pH_now = sensors[2];
-    print("temperature--> " + sensors[0] + "\t");
-    print("motor speed--> " + sensors[1] + "\t");
-    println("pH--> " + sensors[2] );
-    if (heat_now != null){
-    Textlabel pHValue = ((Textlabel)cp5.getController("pHValue"));
-    Textlabel heatValue = ((Textlabel)cp5.getController("heatValue"));
-    Textlabel stirValue = ((Textlabel)cp5.getController("stirValue"));
-    pHValue.setValue(pH_now);
-    heatValue.setValue(heat_now);
-    stirValue.setValue(stir_now);
-    }
-    for (int n =0; n<3; n++){
-        sensors[n] = null;
-    }
   }
 }
 
