@@ -6,12 +6,16 @@ PFont font;
 double set_pH;
 double set_heat;
 double set_stir;
-double pH;
-double heat;
-double stir;
+float pH;
+float heat;
+float stir;
 String pH_now;
 String heat_now;
 String stir_now;
+float stir2 = 0;
+float heat2 = 0;
+float pH2 = 0;
+
 //String[] sensors;
 //sensors = new String[3];
 
@@ -145,8 +149,13 @@ void draw(){
   stir = cp5.getController("set_stir").getValue();
   heat = cp5.getController("set_heat").getValue();
   pH = cp5.getController("set_pH").getValue();
-  myport.write(heat+","+stir+","+pH);
-  //println(heat+","+stir+","+pH);
+  if (stir != stir2 || heat != heat2 || pH != pH2 ){
+    myport.write(heat+","+stir+","+pH);
+    stir2 = stir;
+    heat2 = heat;
+    pH2 = pH;
+  }
+  println(heat+","+stir+","+pH);
   
   if(myport.available()>0){ 
     String[] sensors=new String[3];
