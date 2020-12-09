@@ -9,6 +9,9 @@ double set_stir;
 double pH;
 double heat;
 double stir;
+double pH_now;
+double heat_now;
+double stir_now;
 //String[] sensors;
 //sensors = new String[3];
 String[] sensors=new String[3];
@@ -134,6 +137,9 @@ void draw(){
     //for (int n =0; n<3; n++){
         //double sensors[n] = Double.parseDouble(sensor[n]);
     //}
+    heat_now = double(sensors[0]);
+    stir_now = double(sensors[1]);
+    pH_now = double(sensors[2]);
     print("temperature--> " + sensors[0] + "\t");
     print("motor speed--> " + sensors[1] + "\t");
     println("pH--> " + sensors[2] );
