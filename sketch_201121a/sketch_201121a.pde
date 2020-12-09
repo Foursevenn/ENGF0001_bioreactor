@@ -165,17 +165,18 @@ void draw(){
     print("temperature--> " + sensors[0] + "\t");
     print("motor speed--> " + sensors[1] + "\t");
     println("pH--> " + sensors[2] );
+    if (heat_now != null){
+    Textlabel pHValue = ((Textlabel)cp5.getController("pHValue"));
+    Textlabel heatValue = ((Textlabel)cp5.getController("heatValue"));
+    Textlabel stirValue = ((Textlabel)cp5.getController("stirValue"));
+    pHValue.setValue(pH_now);
+    heatValue.setValue(heat_now);
+    stirValue.setValue(stir_now);
+    }
     for (int n =0; n<3; n++){
         sensors[n] = null;
     }
   }
-  Textlabel pHValue = ((Textlabel)cp5.getController("pHValue"));
-  Textlabel heatValue = ((Textlabel)cp5.getController("heatValue"));
-  Textlabel stirValue = ((Textlabel)cp5.getController("stirValue"));
-  pHValue.setValue(pH_now);
-  heatValue.setValue(heat_now);
-  stirValue.setValue(stir_now);
-  
 }
 
 void deliver(){
