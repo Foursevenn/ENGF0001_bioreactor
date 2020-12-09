@@ -112,13 +112,13 @@ void setup(){
      .setGroup(g3)
      ;
      
-  Textlabel pHValue = cp5.addTextlabel("distanceValue","VALUE",270,170);
+  Textlabel pHValue = cp5.addTextlabel("pHValue","VALUE",270,170);
   pHValue.moveTo(g3);
   
-  Textlabel heatValue = cp5.addTextlabel("distanceValue","VALUE",270,170);
+  Textlabel heatValue = cp5.addTextlabel("heatValue","VALUE",270,170);
   heatValue.moveTo(g1);
   
-  Textlabel stirValue = cp5.addTextlabel("distanceValue","VALUE",270,170);
+  Textlabel stirValue = cp5.addTextlabel("stirValue","VALUE",270,170);
   stirValue.moveTo(g2);
   
   
