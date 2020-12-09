@@ -1,7 +1,7 @@
 import controlP5.*;
 import processing.serial.*;
 ControlP5 cp5;
-Serial port;
+Serial myport;
 PFont font;
 double set_pH;
 double set_heat;
@@ -9,6 +9,9 @@ double set_stir;
 double pH;
 double heat;
 double stir;
+//String[] sensors;
+//sensors = new String[3];
+String[] sensors=new String[3];
 String s;
 PrintWriter output;
 void setup(){
@@ -17,9 +20,9 @@ void setup(){
   
   cp5 = new ControlP5(this);
   printArray(Serial.list()); //?
-  port = new Serial(this, Serial.list()[1], 9600);
+  myport = new Serial(this,"/tmp/simavr-uart0", 9600);
 // don’t generate a serialEvent() unless you get a newline character:
-  port.bufferUntil('\n');
+  myport.bufferUntil('\n');
   output = createWriter("log.txt");
   
   Group g1 = cp5.addGroup("Temperature")
@@ -122,24 +125,36 @@ void draw(){
   text("Bioreactor Team 50 V.3",340, 50);
   //output.println( + "t" + );
   
-  if(port.available()>0){ 
-    s = port.readStringUntil('\n');
+  if(myport.available()>0){ 
+    s = myport.readStringUntil('\n');
+    s = trim(s);
+    sensors[0] = split(s,",")[0];
+    sensors[1] = split(s,",")[1];
+    sensors[2] = split(s,",")[2];
+    //for (int n =0; n<3; n++){
+        //double sensors[n] = Double.parseDouble(sensor[n]);
+    //}
+    print("temperature--> " + sensors[0] + "\t");
+    print("motor speed--> " + sensors[1] + "\t");
+    println("pH--> " + sensors[2] );
+    for (int n =0; n<3; n++){
+        sensors[n] = null;
+    }
   }
-println(s);
 }
 
 void deliver(){
   stir = cp5.getController("set_stir").getValue();
   heat = cp5.getController("set_heat").getValue();
   pH = cp5.getController("set_pH").getValue();
-  port.write("a"+stir+","+heat+","+pH+"\n");
+  myport.write("a"+stir+","+heat+","+pH+"\n");
 }
 
 void toggle(boolean theFlag){
   if(theFlag==true){
-    println("aaaa");
+    myport.write("aaaa");
   } else{
-    println("bbbb");
+    myport.write("bbbb");
   }
 }
 
@@ -149,12 +164,12 @@ void keyPressed() {
   exit(); // Stops the program
 }
 
-void serialEvent (Serial myPort) {
+//void serialEvent (Serial myPort) {
   // get the ASCII string:
-  String inString = myPort.readStringUntil('\n');
-  if (inString != null) {
+//  String inString = myPort.readStringUntil('\n');
+//  if (inString != null) {
     // trim off any whitespace:
-    inString = trim(inString);
-    println("original val.: ", inString);
-  }
-}
+//    inString = trim(inString);
+//    println("original val.: ", inString);
+//  }
+//}
