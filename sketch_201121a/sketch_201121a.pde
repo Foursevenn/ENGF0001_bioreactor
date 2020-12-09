@@ -54,8 +54,8 @@ void setup(){
     .setLabel("Set rpm")
     .setPosition(20,160)
     .setSize(200,20)
-    .setRange(0,1500)
-    .setValue(800)
+    .setRange(500,1500)
+    .setValue(1000)
     .setFont(font)
     .setGroup(g2)
     ;
