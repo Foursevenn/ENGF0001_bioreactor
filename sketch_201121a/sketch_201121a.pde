@@ -9,9 +9,9 @@ double set_stir;
 double pH;
 double heat;
 double stir;
-double pH_now;
-double heat_now;
-double stir_now;
+String pH_now;
+String heat_now;
+String stir_now;
 //String[] sensors;
 //sensors = new String[3];
 String[] sensors=new String[3];
@@ -111,6 +111,17 @@ void setup(){
      .setColorCaptionLabel(color(40))
      .setGroup(g3)
      ;
+     
+  Textlabel pHValue = cp5.addTextlabel("distanceValue","VALUE",270,170);
+  pHValue.moveTo(g3);
+  
+  Textlabel heatValue = cp5.addTextlabel("distanceValue","VALUE",270,170);
+  heatValue.moveTo(g1);
+  
+  Textlabel stirValue = cp5.addTextlabel("distanceValue","VALUE",270,170);
+  stirValue.moveTo(g2);
+  
+  
   //port = new Serial(this ,"/tmp/simavr-uart0",9600);
 }
 
@@ -148,9 +159,9 @@ void draw(){
     //for (int n =0; n<3; n++){
         //double sensors[n] = Double.parseDouble(sensor[n]);
     //}
-    heat_now = double(sensors[0]);
-    stir_now = double(sensors[1]);
-    pH_now = double(sensors[2]);
+    heat_now = sensors[0];
+    stir_now = sensors[1];
+    pH_now = sensors[2];
     print("temperature--> " + sensors[0] + "\t");
     print("motor speed--> " + sensors[1] + "\t");
     println("pH--> " + sensors[2] );
@@ -158,6 +169,13 @@ void draw(){
         sensors[n] = null;
     }
   }
+  Textlabel pHValue = ((Textlabel)cp5.getController("pHValue"));
+  Textlabel heatValue = ((Textlabel)cp5.getController("heatValue"));
+  Textlabel stirValue = ((Textlabel)cp5.getController("stirValue"));
+  pHValue.setValue(pH_now);
+  heatValue.setValue(heat_now);
+  stirValue.setValue(stir_now);
+  
 }
 
 void deliver(){
@@ -180,6 +198,7 @@ void keyPressed() {
   output.close(); // Finishes the file
   exit(); // Stops the program
 }
+
 
 //void serialEvent (Serial myPort) {
   // get the ASCII string:
