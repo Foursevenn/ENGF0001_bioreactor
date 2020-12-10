@@ -145,6 +145,7 @@ void draw(){
   text("Master Switch", 595, 380);
   text("Bioreactor Team 50 V.3",340, 50);
   //output.println( + "t" + );
+  if (heat2 == 0) {myport.write("Hello");}
   
   stir = cp5.getController("set_stir").getValue();
   heat = cp5.getController("set_heat").getValue();
@@ -155,8 +156,11 @@ void draw(){
     heat2 = heat;
     pH2 = pH;
   }
-  println(heat+","+stir+","+pH);
-  
+  //println(heat+","+stir+","+pH);
+  if(myport.available()>0){
+    s = myport.readStringUntil('\n');
+    println(s);
+  }
   if(myport.available()>0){ 
     String[] sensors=new String[3];
     s = myport.readStringUntil('\n');

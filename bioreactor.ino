@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <Wire.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
 void heat(void);
 void stir(void);
@@ -55,8 +55,10 @@ int pHArrayIndex =0;
 int count = 1;
 
 String val1;
+String c;
 char* val2;
 char* setv[3];
+bool connect = false;
 
 // #define ArrayLength 10
 // double pHArray[ArrayLength];
@@ -88,12 +90,16 @@ void setup() {
  
 void loop() {
   if (Serial.available()>0) {
-      val1 = Serial.read();
+    c = Serial.readString().c_str();
+    if (strcmp(c,"Hello")==0){connect=true;Serial.println("Hello");}
+  }
+  if (cennect == true) {
+      val1 = Serial.readString();
       val2 = val1.c_str();
       setv[0] = strtok(val2,",");
       setv[1] = strtok(NULL,",");
       setv[2] = strtok(NULL,",");
-      settemp = atof(setv[0]);
+      settemp = atof(setv[0])+273.15;
       setspeed = atof(setv[1]);
       setpH = atof(setv[2]);
   }
@@ -105,12 +111,12 @@ void loop() {
   delay(200);
 }
 
-void establishContact(){
-    while (Serial.available() <= 0){
-        Serial.println("0,0,0");
-        delay(300);
-    }
-}
+// void establishContact(){
+//     while (Serial.available() <= 0){
+//         Serial.println("0,0,0");
+//         delay(300);
+//     }
+//}
 
 //------------------------------------------------------------------------------
 double filter(double buf[]){
@@ -323,6 +329,6 @@ void pulse(){
 //------------------------------------------------------------------------------
 
 double get_output(){
-  double val = map(int(setspeed), 500, 1500, 41.5, 122.5);
+  double val = map(setspeed, 500.0, 1500.0, 41.5, 122.5);
   analogWrite(stirrerPin, val);
 }
