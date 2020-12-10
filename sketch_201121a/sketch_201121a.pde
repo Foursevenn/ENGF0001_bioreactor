@@ -67,7 +67,7 @@ void setup(){
     .setLabel("Set °C")
     .setPosition(20,160)
     .setSize(200,20)
-    .setRange(10,50)
+    .setRange(25,35)
     .setValue(30)
     .setFont(font)
     .setGroup(g1)
@@ -81,12 +81,11 @@ void setup(){
     .setFont(font)
     .setGroup(g3)
     ;
-  cp5.addToggle("toggle")
+  cp5.addButton("toggle")
      .setLabel("Master Switch")
      .setPosition(525,410)
      .setSize(275,100)
-     .setValue(false)
-     .setMode(ControlP5.SWITCH)
+     .setImages(loadImage("bio.jpg"), loadImage("bio.jpg"), loadImage("bio.jpg")); 
      ;
   cp5.addChart("Temperature to time")
      .setPosition(20, 20)
