@@ -12,11 +12,9 @@ float stir;
 String pH_now;
 String heat_now;
 String stir_now;
-float stir2 = 0.0;
-float heat2 = 0.0;
-float pH2 = 0.0;
-int connect = 0;
-int handshake = 0;
+float stir2 = 0;
+float heat2 = 0;
+float pH2 = 0;
 
 //String[] sensors;
 //sensors = new String[3];
@@ -69,7 +67,7 @@ void setup(){
     .setLabel("Set °C")
     .setPosition(20,160)
     .setSize(200,20)
-    .setRange(10,50)
+    .setRange(25,35)
     .setValue(30)
     .setFont(font)
     .setGroup(g1)
@@ -83,12 +81,11 @@ void setup(){
     .setFont(font)
     .setGroup(g3)
     ;
-  cp5.addToggle("toggle")
+  cp5.addButton("toggle")
      .setLabel("Master Switch")
      .setPosition(525,410)
      .setSize(275,100)
-     .setValue(false)
-     .setMode(ControlP5.SWITCH)
+     .setImages(loadImage("bio.png"), loadImage("bio.png"), loadImage("bio.png")); 
      ;
   cp5.addChart("Temperature to time")
      .setPosition(20, 20)
@@ -118,6 +115,7 @@ void setup(){
      .setGroup(g3)
      ;
      
+  fill(150,0,255);
   Textlabel pHValue = cp5.addTextlabel("pHValue","VALUE",60,60);
   pHValue.setFont(font);
   pHValue.moveTo(g3);
@@ -130,7 +128,7 @@ void setup(){
   stirValue.setFont(font);
   stirValue.moveTo(g2);
   
-  
+
   //port = new Serial(this ,"/tmp/simavr-uart0",9600);
 }
 
@@ -147,31 +145,21 @@ void draw(){
   text("Master Switch", 595, 380);
   text("Bioreactor Team 50 V.3",340, 50);
   //output.println( + "t" + );
-  if (heat2 == 0.0&&handshake==0) {myport.write("Hello");handshake=1;}
-  if(myport.available()>0&&connect == 0){
-    s = myport.readStringUntil('\n');
-    //println(s);
-    if (s!=null){
-        if(connect==0&&s.substring(0,1).equals("H")==true){connect = 1;println("connected");}
-    }
+  
+  stir = cp5.getController("set_stir").getValue();
+  heat = cp5.getController("set_heat").getValue();
+  pH = cp5.getController("set_pH").getValue();
+  if (stir != stir2 || heat != heat2 || pH != pH2 ){
+    myport.write(heat+","+stir+","+pH);
+    stir2 = stir;
+    heat2 = heat;
+    pH2 = pH;
   }
-  if (connect==1&&handshake==1){
-    stir = cp5.getController("set_stir").getValue();
-    heat = cp5.getController("set_heat").getValue();
-    pH = cp5.getController("set_pH").getValue();
-    if (stir != stir2 || heat != heat2 || pH != pH2 ){
-      myport.write(heat+","+stir+","+pH);
-      stir2 = stir;
-      heat2 = heat;
-      pH2 = pH;
-    }
-  }
-  //println(heat+","+stir+","+pH);
-  if(myport.available()>0&&connect==1){ 
-    //println("H");
+  println(heat+","+stir+","+pH);
+  
+  if(myport.available()>0){ 
     String[] sensors=new String[3];
     s = myport.readStringUntil('\n');
-    //println(s);
     if (s != null){
         s = trim(s);
         sensors[0] = split(s,",")[0];
@@ -209,13 +197,13 @@ void deliver(){
   myport.write("a"+stir+","+heat+","+pH+"\n");
 }
 
-//void toggle(boolean theFlag){
-//  if(theFlag==true){
-//    myport.write("aaaa");
-//  } else{
-//    myport.write("bbbb");
-//  }
-//}
+void toggle(boolean theFlag){
+  if(theFlag==true){
+    myport.write("aaaa");
+  } else{
+    myport.write("bbbb");
+  }
+}
 
 void keyPressed() {
   output.flush(); // Writes the remaining data to the file
