@@ -84,7 +84,7 @@ void setup(){
     .setGroup(g3)
     ;
   cp5.addButton("toggle")
-     .setPosition(510,400)
+     .setPosition(460,350)
      .setSize(275,100)
      .setImages(loadImage("bio.png"), loadImage("bio.png"), loadImage("bio.png"))
      ;
@@ -142,7 +142,6 @@ void draw(){
   
   fill(150,0,255);
   textFont(font);
-  text("Master Switch", 595, 380);
   text("Bioreactor Team 50 V.3",340, 50);
   //output.println( + "t" + );
   if (heat2 == 0.0&&handshake==0) {myport.write("Hello");handshake=1;}
