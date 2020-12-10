@@ -116,6 +116,7 @@ void setup(){
      .setGroup(g3)
      ;
      
+  fill(150,0,255);
   Textlabel pHValue = cp5.addTextlabel("pHValue","VALUE",60,60);
   pHValue.setFont(font);
   pHValue.moveTo(g3);
@@ -128,7 +129,7 @@ void setup(){
   stirValue.setFont(font);
   stirValue.moveTo(g2);
   
-  
+
   //port = new Serial(this ,"/tmp/simavr-uart0",9600);
 }
 
