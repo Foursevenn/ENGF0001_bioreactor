@@ -60,10 +60,10 @@ void loop() {
   int i;
   //double filtered_t,filtered_s,filtered_pH;
   if(count == 1){analogWrite(heaterPin,100);}
-  analogWrite(stirrerPin,95+count*1.0);
+  analogWrite(stirrerPin,50+count*5.0);
   Wire.beginTransmission(0x40);
-  Wire.write(0x0A);
-  Wire.write(0x01);
+  Wire.write(0x06);
+  Wire.write(0x08);
   Wire.write(0x00);
   Wire.write(0xFF);
   Wire.write(0xEF);
