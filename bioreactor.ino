@@ -56,6 +56,8 @@ int count = 1;
 
 String val1;
 String c;
+char* h = "Hello";
+char* cc;
 char* val2;
 char* setv[3];
 bool connect = false;
@@ -90,8 +92,9 @@ void setup() {
  
 void loop() {
   if (Serial.available()>0) {
-    c = Serial.readString().c_str();
-    if (strcmp(c,"Hello")==0){connect=true;Serial.println("Hello");}
+    c = Serial.readString();
+    cc = c.c_str();
+    if (strcmp(cc,h)==0){connect=true;Serial.println("Hello");}
   }
   if (cennect == true) {
       val1 = Serial.readString();
