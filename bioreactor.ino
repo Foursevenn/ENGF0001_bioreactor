@@ -60,7 +60,8 @@ char* h = "Hello";
 char* cc;
 char* val2;
 char* setv[3];
-bool connect = false;
+int connected = 0;
+int handshake = 0;
 
 // #define ArrayLength 10
 // double pHArray[ArrayLength];
@@ -91,12 +92,18 @@ void setup() {
 
  
 void loop() {
-  if (Serial.available()>0) {
+  //if (connect != true){Serial.println("Hi");}
+  if (Serial.available()>0&&connected == 0&&handshake==0) {
     c = Serial.readString();
     cc = c.c_str();
-    if (strcmp(cc,h)==0){connect=true;Serial.println("Hello");}
+    //Serial.println(cc);
+    if (strcmp(cc,h)==0&&handshake ==0){
+      connected=1;
+      Serial.println("Hi");
+      handshake=1;
+    }
   }
-  if (cennect == true) {
+  if (connected == 1 && Serial.available()>0) {
       val1 = Serial.readString();
       val2 = val1.c_str();
       setv[0] = strtok(val2,",");
@@ -106,12 +113,14 @@ void loop() {
       setspeed = atof(setv[1]);
       setpH = atof(setv[2]);
   }
-  heat();
-  stir();
-  pH();
-  count+=1;
-  if(count == 10) {count = 0;}
-  delay(200);
+  if (connected==1){
+    heat();
+    stir();
+    pH();
+    count+=1;
+    if(count == 10) {count = 0;}
+    delay(200);
+  }
 }
 
 // void establishContact(){
