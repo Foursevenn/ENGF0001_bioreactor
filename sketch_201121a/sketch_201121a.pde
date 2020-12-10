@@ -12,9 +12,9 @@ float stir;
 String pH_now;
 String heat_now;
 String stir_now;
-float stir2 = 0;
-float heat2 = 0;
-float pH2 = 0;
+float stir2 = 0.0;
+float heat2 = 0.0;
+float pH2 = 0.0;
 
 //String[] sensors;
 //sensors = new String[3];
@@ -145,7 +145,7 @@ void draw(){
   text("Master Switch", 595, 380);
   text("Bioreactor Team 50 V.3",340, 50);
   //output.println( + "t" + );
-  if (heat2 == 0) {myport.write("Hello");}
+  if (heat2 == 0.0) {myport.write("Hello");}
   
   stir = cp5.getController("set_stir").getValue();
   heat = cp5.getController("set_heat").getValue();
